@@ -1,5 +1,7 @@
 FROM lucasvmigotto/devenv:node-24.20.0-pnpm-ubuntu
 
+ENV PATH="${PATH}:/home/developer/.local/share/pnpm/bin"
+
 RUN <<EOF
 
 # We explicitly call 'sudo -H bash' to receive the inner heredoc
@@ -17,7 +19,11 @@ curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download
 
 mkdir /cache && chmod 777 /cache
 
+mkdir /app && chown 1000:1000 /app
+
 INNER_EOF
+
+pnpm install -g @antfu/ni
 
 EOF
 
