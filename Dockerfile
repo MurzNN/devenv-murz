@@ -18,3 +18,5 @@ curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download
 INNER_EOF
 
 EOF
+
+ENTRYPOINT tail -f /dev/null
