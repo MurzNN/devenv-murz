@@ -27,4 +27,6 @@ pnpm install -g @antfu/ni
 
 EOF
 
+WORKDIR /app
+
 ENTRYPOINT tail -f /dev/null
