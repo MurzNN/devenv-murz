@@ -21,6 +21,4 @@ INNER_EOF
 
 EOF
 
-ln -s 
-
 ENTRYPOINT tail -f /dev/null
