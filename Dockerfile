@@ -8,7 +8,7 @@ RUN <<EOF
 sudo -H sh << 'INNER_EOF'
 
 apt update
-apt install -y --no-install-recommends mc htop openssh-client
+apt install -y --no-install-recommends mc htop openssh-client telnet
 rm -rf /var/lib/apt/lists/*
 
 curl https://cursor.com/install -fsS | bash
