@@ -26,5 +26,5 @@ jobs:
       # Uses the environment variable created above to build and push safely
       - name: Build and Push Image
         run: |
-          docker build -t ghcr.io/${{ env.IMAGE_PATH }}:latest .
+          docker build --progress=plain -t ghcr.io/${{ env.IMAGE_PATH }}:latest .
           docker push ghcr.io/${{ env.IMAGE_PATH }}:latest
