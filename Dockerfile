@@ -71,8 +71,8 @@ curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download
 pnpm install -g @antfu/ni
 
 bin install get.helm.sh
-bin install https://github.com/helmwave/helmwave
-bin install github.com/mattn/goreman
+bin install github.com/helmwave/helmwave
+bin install github.com/cli/cli
 
 # Install Cursor Agent
 curl https://cursor.com/install -fsS | bash
