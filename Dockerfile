@@ -12,7 +12,7 @@ mc
 htop
 openssh-client
 telnet
-xz-utils
+supervisor
 "
 apt-get install -y --no-install-recommends $packages
 rm -rf /var/lib/apt/lists/*
@@ -29,6 +29,28 @@ RUN <<'EOF'
 # Create environment directories
 mkdir /cache && chmod 777 /cache
 mkdir /app && chown 1000:1000 /app
+chmod 777 /var/log/supervisor
+
+cat > /etc/supervisor/supervisord.conf <<'CONF'
+[unix_http_server]
+file=/tmp/supervisor.sock
+chmod=0700
+
+[supervisord]
+nodaemon=true
+logfile=/tmp/supervisord.log
+pidfile=/tmp/supervisord.pid
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///tmp/supervisor.sock
+
+# Automatically load all service configs from the conf.d directory
+[include]
+files = /app/.deploy/supervisor/*.conf
+CONF
 
 EOF
 
@@ -59,4 +81,4 @@ EOF
 
 WORKDIR /app
 
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/Procfile ]; then exec goreman --exit-on-error=false start; else exec tail -f /dev/null; fi"]
+ENTRYPOINT ["/usr/bin/supervisord","-c","/etc/supervisor/supervisord.conf"]
