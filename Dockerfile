@@ -19,16 +19,12 @@ rm -rf /var/lib/apt/lists/*
 
 EOF
 
-# Install S6-Overlay.
-ARG S6_OVERLAY_VERSION=3.2.3.2
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && rm /tmp/s6-overlay-noarch.tar.xz
-ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-x86_64.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz && rm /tmp/s6-overlay-x86_64.tar.xz
-
-
 RUN <<'EOF'
 # Run commands as root user
+
+# # Install a root bin tool
+# mkdir -p ~/.config/bin && echo "{\"default_path\": \"/usr/local/bin\"}" > ~/.config/bin/config.json
+# curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download/v0.29.4/bin_0.29.4_linux_amd64 && chmod +x /tmp/bin_install && /tmp/bin_install install github.com/marcosnils/bin && rm /tmp/bin_install
 
 # Create environment directories
 mkdir /cache && chmod 777 /cache
@@ -51,7 +47,10 @@ curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download
 
 # Install userspace tools
 pnpm install -g @antfu/ni
+
 bin install get.helm.sh
+bin install https://github.com/helmwave/helmwave
+bin install github.com/mattn/goreman
 
 # Install Cursor Agent
 curl https://cursor.com/install -fsS | bash
@@ -60,4 +59,4 @@ EOF
 
 WORKDIR /app
 
-ENTRYPOINT ["/init"]
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/Procfile ]; then exec goreman start; else exec tail -f /dev/null; fi"]
