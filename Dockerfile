@@ -59,4 +59,4 @@ EOF
 
 WORKDIR /app
 
-ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/Procfile ]; then exec goreman start; else exec tail -f /dev/null; fi"]
+ENTRYPOINT ["/bin/sh", "-c", "if [ -f /app/Procfile ]; then exec goreman --exit-on-error=false start; else exec tail -f /dev/null; fi"]
