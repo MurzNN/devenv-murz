@@ -50,7 +50,7 @@ serverurl=unix:///tmp/supervisor.sock
 
 # Automatically load all service configs from the conf.d directory
 [include]
-files = /app/.deploy/supervisor/*.conf
+files = /app/deploy/supervisor/*.conf
 CONF
 
 EOF
