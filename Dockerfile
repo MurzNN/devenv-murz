@@ -11,6 +11,7 @@ packages="
 mc
 htop
 openssh-client
+openssh-server
 telnet
 supervisor
 "
