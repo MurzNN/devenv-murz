@@ -75,6 +75,9 @@ bin install get.helm.sh
 bin install github.com/helmwave/helmwave
 bin install github.com/cli/cli
 
+# Install APM – Agent Package Manager
+curl -sSL https://aka.ms/apm-unix | sh
+
 # Install Cursor Agent
 curl https://cursor.com/install -fsS | bash
 
