@@ -68,11 +68,8 @@ mkdir -p ${HOME}/.local/bin
 mkdir -p ~/.config/bin && echo "{\"default_path\": \"${HOME}/.local/bin\"}" > ~/.config/bin/config.json
 curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download/v0.29.4/bin_0.29.4_linux_amd64 && chmod +x /tmp/bin_install && /tmp/bin_install install github.com/marcosnils/bin && rm /tmp/bin_install
 
-# Install nub package manager
-curl -fsSL https://nubjs.com/install.sh | bash
-
 # Install userspace tools
-pnpm install -g @antfu/ni
+pnpm install -g @antfu/ni @nubjs/nub
 
 bin install get.helm.sh
 bin install github.com/helmwave/helmwave
