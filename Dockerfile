@@ -22,7 +22,16 @@ EOF
 
 RUN <<'EOF'
 # Run commands as root user
-echo "#!/usr/bin/env sh\n\n/usr/bin/supervisord -c /etc/supervisor/supervisord.conf" > /entrypoint.sh
+cat <<'ENTRYPOINT' > /entrypoint.sh
+#!/usr/bin/env sh
+
+# Dynamically write the Kubernetes runtime PATH to a global profile script
+echo "export PATH=\"${PATH}\"" > /etc/profile.d/k8s_path.sh
+
+cat /entrypoint.sh
+
+/usr/bin/supervisord -c /etc/supervisor/supervisord.conf
+ENTRYPOINT
 chmod +x /entrypoint.sh
 
 # # Install a root bin tool
@@ -59,8 +68,6 @@ EOF
 
 USER ${DEVENV_USER}
 
-ENV PATH="${PATH}:${HOME}/.local/bin:${HOME}/.local/share/pnpm/bin"
-
 RUN <<'EOF'
 # Run commands as user
 
@@ -84,6 +91,8 @@ curl -sSL https://aka.ms/apm-unix | sh
 curl https://cursor.com/install -fsS | bash
 
 EOF
+
+ENV PATH="${PATH}:${HOME}/.local/bin:${HOME}/.local/share/pnpm/bin"
 
 WORKDIR /app
 
