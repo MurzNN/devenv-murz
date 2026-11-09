@@ -22,6 +22,7 @@ EOF
 
 RUN <<'EOF'
 # Run commands as root user
+echo "#!/usr/bin/env sh\n\n/usr/bin/supervisord -c /etc/supervisor/supervisord.conf" > /entrypoint.sh
 
 # # Install a root bin tool
 # mkdir -p ~/.config/bin && echo "{\"default_path\": \"/usr/local/bin\"}" > ~/.config/bin/config.json
@@ -85,4 +86,4 @@ EOF
 
 WORKDIR /app
 
-ENTRYPOINT ["/usr/bin/supervisord","-c","/etc/supervisor/supervisord.conf"]
+ENTRYPOINT ["/entrypoint.sh"]
