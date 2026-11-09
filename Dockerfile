@@ -26,9 +26,9 @@ cat <<'ENTRYPOINT' > /entrypoint.sh
 #!/usr/bin/env sh
 
 # Export the environment variables for SSH sessions from the parent process
+sudo tee -a /etc/profile > /dev/null <<'ETC_PROFILE'
 [ -f /proc/1/environ ] && while read -r -d $'\0' env_var; do export "$env_var" 2>/dev/null; done < /proc/1/environ
-
-cat /entrypoint.sh
+ETC_PROFILE
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 ENTRYPOINT
