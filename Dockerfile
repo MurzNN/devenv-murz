@@ -25,8 +25,9 @@ RUN <<'EOF'
 cat <<'ENTRYPOINT' > /entrypoint.sh
 #!/usr/bin/env sh
 
-# Dynamically write the Kubernetes runtime PATH to a global profile script
-echo "export PATH=\"${PATH}\"" > /etc/profile.d/k8s_path.sh
+# Export the entire container environment to a file for SSH sessions,
+# filtering out standard dynamic variables to prevent duplication.
+env | grep -v -E "^(HOME|USER|LOGNAME|SHELL|MAIL|SSH_|_)" | sed 's/^/export /' > /etc/profile.d/k8s_env.sh
 
 cat /entrypoint.sh
 
