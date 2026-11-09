@@ -25,9 +25,8 @@ RUN <<'EOF'
 cat <<'ENTRYPOINT' > /entrypoint.sh
 #!/usr/bin/env sh
 
-# Export the entire container environment to a file for SSH sessions,
-# filtering out standard dynamic variables to prevent duplication.
-env | grep -v -E "^(HOME|USER|LOGNAME|SHELL|MAIL|SSH_|_)" | sed 's/^/export /' > /etc/profile.d/k8s_env.sh
+# Export the environment variables for SSH sessions from the parent process
+[ -f /proc/1/environ ] && while read -r -d $'\0' env_var; do export "$env_var" 2>/dev/null; done < /proc/1/environ
 
 cat /entrypoint.sh
 
