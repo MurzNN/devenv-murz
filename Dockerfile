@@ -14,6 +14,8 @@ openssh-client
 openssh-server
 telnet
 supervisor
+rg
+git
 "
 apt-get install -y --no-install-recommends $packages
 rm -rf /var/lib/apt/lists/*
