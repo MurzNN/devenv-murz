@@ -38,8 +38,8 @@ cat <<'ENTRYPOINT' > /entrypoint.sh
 #!/usr/bin/env sh
 
 # Save container environment variables for all login shells (SSH, su -)
-env | grep -vE '^(HOME|USER|LOGNAME|SHELL|PWD|OLDPWD|SHLVL|_)=' | awk -F= '{printf "export %s=\"%s\"\n", $1, substr($0, index($0,$2))}' > /etc/profile.d/container_env.sh
-chmod 0644 /etc/profile.d/container_env.sh
+env | grep -vE '^(HOME|USER|LOGNAME|SHELL|PWD|OLDPWD|SHLVL|_)=' | awk -F= '{printf "export %s=\"%s\"\n", $1, substr($0, index($0,$2))}' | sudo tee /etc/profile.d/container_env.sh >/dev/null
+sudo chmod 0644 /etc/profile.d/container_env.sh
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 ENTRYPOINT
