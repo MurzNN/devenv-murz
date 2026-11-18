@@ -77,10 +77,11 @@ CONF
 
 EOF
 
-# 2. Create the user with a home directory and default bash shell
-RUN useradd -m -s /bin/bash ${USERNAME}
+# Rename the group, user, and move the home directory
+RUN groupmod -n ${USERNAME} node \
+&& usermod -l ${USERNAME} -d /home/${USERNAME} -m node
 
-# 3. Grant passwordless sudo permissions and set strict file permissions
+# Grant passwordless sudo permissions and set strict file permissions
 RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
     chmod 0440 /etc/sudoers.d/${USERNAME}
 
