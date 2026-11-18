@@ -1,10 +1,15 @@
-FROM lucasvmigotto/devenv:node-24.20.0-pnpm-ubuntu
+FROM node:24-trixie
 
 USER root
 
 # Install system packages
 
 RUN <<'EOF'
+
+# Add the official Eternal Terminal repository and install ET
+mkdir -m 0755 -p /etc/apt/keyrings
+curl -sSL https://github.com/MisterTea/debian-et/raw/master/et.gpg | tee /etc/apt/keyrings/et.gpg >/dev/null
+echo "deb [signed-by=/etc/apt/keyrings/et.gpg] https://mistertea.github.io/debian-et/debian-source/ $(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) main" | tee /etc/apt/sources.list.d/et.list
 
 apt-get update
 packages="
@@ -14,8 +19,9 @@ openssh-client
 openssh-server
 telnet
 supervisor
-rg
+ripgrep
 git
+et
 "
 apt-get install -y --no-install-recommends $packages
 rm -rf /var/lib/apt/lists/*
