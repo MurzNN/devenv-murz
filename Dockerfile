@@ -1,5 +1,10 @@
 FROM node:24-trixie
 
+ENV DEVENV_USER=developer
+ENV HOME=/home/${DEVENV_USER}
+
+RUN useradd -m ${DEVENV_USER}
+
 USER root
 
 # Install system packages
