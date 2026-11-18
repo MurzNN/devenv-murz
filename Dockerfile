@@ -1,13 +1,11 @@
 FROM node:24-trixie
 
-ENV DEVENV_USER=developer
-ENV HOME=/home/${DEVENV_USER}
-
-RUN useradd -m ${DEVENV_USER}
-
-USER root
+ENV USERNAME=developer
+ENV HOME=/home/${USERNAME}
 
 # Install system packages
+
+USER root
 
 RUN <<'EOF'
 
@@ -18,8 +16,7 @@ echo "deb [signed-by=/etc/apt/keyrings/et.gpg] https://mistertea.github.io/debia
 
 apt-get update
 packages="
-mc
-htop
+sudo
 openssh-client
 openssh-server
 telnet
@@ -27,6 +24,8 @@ supervisor
 ripgrep
 git
 et
+mc
+htop
 "
 apt-get install -y --no-install-recommends $packages
 rm -rf /var/lib/apt/lists/*
@@ -34,14 +33,13 @@ rm -rf /var/lib/apt/lists/*
 EOF
 
 RUN <<'EOF'
-# Run commands as root user
+# Run custom commands as root user
 cat <<'ENTRYPOINT' > /entrypoint.sh
 #!/usr/bin/env sh
 
-# Export the environment variables for SSH sessions from the parent process
-sudo tee -a /etc/profile > /dev/null <<'ETC_PROFILE'
-[ -f /proc/1/environ ] && while read -r -d $'\0' env_var; do export "$env_var" 2>/dev/null; done < /proc/1/environ
-ETC_PROFILE
+# Save container environment variables for all login shells (SSH, su -)
+env | grep -vE '^(HOME|USER|LOGNAME|SHELL|PWD|OLDPWD|SHLVL|_)=' | awk -F= '{printf "export %s=\"%s\"\n", $1, substr($0, index($0,$2))}' > /etc/profile.d/container_env.sh
+chmod 0644 /etc/profile.d/container_env.sh
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 ENTRYPOINT
@@ -79,7 +77,14 @@ CONF
 
 EOF
 
-USER ${DEVENV_USER}
+# 2. Create the user with a home directory and default bash shell
+RUN useradd -m -s /bin/bash ${USERNAME}
+
+# 3. Grant passwordless sudo permissions and set strict file permissions
+RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
+    chmod 0440 /etc/sudoers.d/${USERNAME}
+
+USER ${USERNAME}
 
 RUN <<'EOF'
 # Run commands as user
