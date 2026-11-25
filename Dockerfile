@@ -44,6 +44,10 @@ env | grep -vE '^(HOME|USER|LOGNAME|SHELL|PWD|OLDPWD|SHLVL|_)=' | awk -F= '{prin
 sudo chmod 0644 /etc/profile.d/container_env.sh
 sudo chown 1000:1000 /home/developer/.ssh
 sudo chmod 700 /home/developer/.ssh
+# fsGroup widens the mounted Secret to 0640; sshd rejects that. Copy onto the PVC as 0600.
+if [ -f /mnt/ssh-host-key/ssh_host_key ]; then
+  sudo install -m 600 -o 1000 -g 1000 /mnt/ssh-host-key/ssh_host_key /home/developer/.ssh/ssh_host_key
+fi
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 ENTRYPOINT

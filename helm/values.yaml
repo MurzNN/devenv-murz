@@ -1,0 +1,138 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/library/common/values.schema.json
+#
+# Helm values — powered by bjw-s common (same as app-template).
+# Docs: https://bjw-s-labs.github.io/helm-charts/docs/app-template/
+
+controllers:
+  main:
+    type: statefulset
+    pod:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+    containers:
+      main:
+        probes:
+          liveness:
+            enabled: false
+          readiness:
+            enabled: false
+          startup:
+            enabled: false
+        image:
+          repository: ghcr.io/murznn/devenv-murz
+          tag: latest
+          # pullPolicy: IfNotPresent
+          pullPolicy: Always
+
+        env:
+          NODE_ENV: development
+
+service:
+  main:
+    ports:
+      http:
+        port: 3030
+  sshd:
+    type: NodePort
+    ports:
+      ssh:
+        port: 2222
+        nodePort: 777 # Override default NodePort by the Helm values.
+  et:
+    type: NodePort
+    ports:
+      et:
+        port: 2022
+        nodePort: 777 # Override default NodePort by the Helm values.
+
+ingress:
+  main:
+    enabled: true
+    annotations:
+      cert-manager.io/cluster-issuer: 'letsencrypt'
+    hosts: []
+    tls:
+    - hosts: []
+
+configMapsFromFolder:
+  enabled: true
+  basePath: "files/configMaps"
+
+persistence:
+  app:
+    accessMode: ReadWriteOnce
+    size: 3Gi
+    globalMounts:
+    - path: /app
+
+  user:
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    globalMounts:
+    - path: /user
+    - path: /home/developer/.ssh
+      subPath: .ssh
+
+  cache:
+    accessMode: ReadWriteOnce
+    size: 10Gi
+    globalMounts:
+    - path: /cache
+    - path: /home/developer/.cache
+      subPath: .cache
+    - path: /home/developer/.yarn
+      subPath: .yarn
+    - path: /home/developer/.pnpm
+      subPath: .pnpm
+    - path: /home/developer/.cursor
+      subPath: .cursor
+    - path: /home/developer/.cursor-server
+      subPath: .cursor-server
+
+  supervisor:
+    type: custom
+    volumeSpec:
+      configMap:
+        name: "{{ .Release.Name }}-devenv-supervisor"
+        defaultMode: 493 # 0644
+        defaultUser: 1000
+    globalMounts:
+    - path: /etc/supervisor/conf.d/services.conf
+      subPath: services.conf
+
+  ssh:
+    type: custom
+    volumeSpec:
+      configMap:
+        name: "{{ .Release.Name }}-devenv-sshd"
+        defaultMode: 493 # 0644
+        defaultUser: 1000
+    globalMounts:
+    - path: /home/developer/.ssh/sshd_config
+      subPath: sshd_config
+
+  # fsGroup ORs 0440 onto volume files, so 0600 becomes 0640 and sshd rejects the host key.
+  # Mount the generated Secret aside; the image entrypoint installs a 0600 copy onto the PVC.
+  ssh-host-key:
+    type: custom
+    volumeSpec:
+      secret:
+        secretName: '{{ include "bjw-s.common.lib.chart.names.fullname" . }}-ssh-host-key'
+        defaultMode: 384 # 0600
+    globalMounts:
+    - path: /mnt/ssh-host-key
+      readOnly: true
+
+  bash:
+    type: custom
+    volumeSpec:
+      configMap:
+        name: "{{ .Release.Name }}-devenv-bash"
+        defaultMode: 493 # 0644
+        defaultUser: 1000
+    globalMounts:
+    - path: /home/developer/.bashrc
+      subPath: .bashrc
