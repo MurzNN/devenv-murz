@@ -79,7 +79,7 @@ EOF
 
 # Rename the group, user, and move the home directory
 RUN groupmod -n ${USERNAME} node \
-&& usermod -l ${USERNAME} -d /home/${USERNAME} -m node
+    && usermod -l ${USERNAME} -d /home/${USERNAME} -m node
 
 # Grant passwordless sudo permissions and set strict file permissions
 RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
@@ -90,6 +90,7 @@ USER ${USERNAME}
 RUN <<'EOF'
 # Run commands as user
 
+mkdir -p ${HOME}/.ssh
 mkdir -p ${HOME}/.local/bin
 
 # Install a bin tool
