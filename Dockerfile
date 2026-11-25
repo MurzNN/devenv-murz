@@ -110,7 +110,7 @@ curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download
 
 # Install useful tools through bin
 bin install get.helm.sh
-bin install github.com/helmwave/helmwave
+bin install github.com/helmwave/helmwave -n *.tar.gz
 bin install github.com/cli/cli
 bin install github.com/tstack/lnav
 
