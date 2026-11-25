@@ -26,6 +26,8 @@ git
 et
 mc
 htop
+inetutils-traceroute
+mtr-tiny
 "
 apt-get install -y --no-install-recommends $packages
 rm -rf /var/lib/apt/lists/*
@@ -106,6 +108,10 @@ pnpm add -g --allow-build=@nubjs/nub @antfu/ni @nubjs/nub
 bin install get.helm.sh
 bin install github.com/helmwave/helmwave
 bin install github.com/cli/cli
+bin install github.com/tstack/lnav
+
+# TODO: Rework to bin when https://github.com/marcosnils/bin/issues/314 is fixed
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 
 # Install APM – Agent Package Manager
 curl -sSL https://aka.ms/apm-unix | sh
