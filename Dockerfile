@@ -95,6 +95,8 @@ RUN echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME} && \
 
 USER ${USERNAME}
 
+ENV PATH="${PATH}:${HOME}/.local/bin:${HOME}/.local/share/pnpm/bin"
+
 RUN <<'EOF'
 # Run commands as user
 
@@ -103,17 +105,10 @@ mkdir -p ${HOME}/.local/bin
 
 # Install a bin tool
 mkdir -p ~/.config/bin && echo "{\"default_path\": \"${HOME}/.local/bin\"}" > ~/.config/bin/config.json
+# TODO: Rework when https://github.com/marcosnils/bin/issues/192 is fixed
 curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download/v0.29.4/bin_0.29.4_linux_amd64 && chmod +x /tmp/bin_install && /tmp/bin_install install github.com/marcosnils/bin && rm /tmp/bin_install
 
-# Install NVM in the user's home directory
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.41.0/install.sh | bash
-
-# Configure PNPM
-corepack enable pnpm
-
-# Install userspace tools
-pnpm add -g --allow-build=@nubjs/nub @antfu/ni @nubjs/nub
-
+# Install useful tools through bin
 bin install get.helm.sh
 bin install github.com/helmwave/helmwave
 bin install github.com/cli/cli
@@ -128,9 +123,20 @@ curl -sSL https://aka.ms/apm-unix | sh
 # Install Cursor Agent
 curl https://cursor.com/install -fsS | bash
 
-EOF
 
-ENV PATH="${PATH}:${HOME}/.local/bin:${HOME}/.local/share/pnpm/bin"
+# Install NVM in the user's home directory
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.41.0/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Configure PNPM
+corepack enable pnpm
+
+# Install userspace Node tools
+pnpm add -g --allow-build=@nubjs/nub @antfu/ni @nubjs/nub
+
+EOF
 
 WORKDIR /app
 
