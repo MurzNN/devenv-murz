@@ -14,6 +14,10 @@ mkdir -m 0755 -p /etc/apt/keyrings
 curl -sSL https://github.com/MisterTea/debian-et/raw/master/et.gpg | tee /etc/apt/keyrings/et.gpg >/dev/null
 echo "deb [signed-by=/etc/apt/keyrings/et.gpg] https://mistertea.github.io/debian-et/debian-source/ $(grep VERSION_CODENAME /etc/os-release | cut -d= -f2) main" | tee /etc/apt/sources.list.d/et.list
 
+# Add the official MongoDB repository and install mongosh
+curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | gpg -o /etc/apt/keyrings/mongodb-server-8.0.gpg --dearmor
+echo "deb [ arch=amd64,arm64 signed-by=/etc/apt/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/debian $(grep VERSION_CODENAME /etc/os-release | cut -d= -f2)/mongodb-org/8.0 main" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+
 apt-get update
 packages="
 sudo
@@ -29,6 +33,7 @@ htop
 iputils-ping
 inetutils-traceroute
 mtr-tiny
+mongodb-mongosh
 "
 apt-get install -y --no-install-recommends $packages
 rm -rf /var/lib/apt/lists/*
