@@ -41,12 +41,6 @@ service:
       ssh:
         port: 2222
         nodePort: 777 # Override default NodePort by the Helm values.
-  et:
-    type: NodePort
-    ports:
-      et:
-        port: 2022
-        nodePort: 777 # Override default NodePort by the Helm values.
 
 ingress:
   main:
@@ -60,6 +54,12 @@ ingress:
 configMapsFromFolder:
   enabled: true
   basePath: "files/configMaps"
+
+configMaps:
+  authorized-keys:
+    suffix: authorized-keys
+    data:
+      authorized-keys: "# Fill this from your deployment."
 
 persistence:
   app:
@@ -124,6 +124,18 @@ persistence:
         defaultMode: 384 # 0600
     globalMounts:
     - path: /mnt/ssh-host-key
+      readOnly: true
+
+  authorized-keys:
+    type: custom
+    volumeSpec:
+      configMap:
+        name: "{{ .Release.Name }}-devenv-authorized-keys"
+        defaultMode: 600
+        defaultUser: 1000
+    globalMounts:
+    - path: /home/developer/.ssh/authorized_keys
+      subPath: authorized-keys
       readOnly: true
 
   bash:
