@@ -42,6 +42,8 @@ cat <<'ENTRYPOINT' > /entrypoint.sh
 # Save container environment variables for all login shells (SSH, su -)
 env | grep -vE '^(HOME|USER|LOGNAME|SHELL|PWD|OLDPWD|SHLVL|_)=' | awk -F= '{printf "export %s=\"%s\"\n", $1, substr($0, index($0,$2))}' | sudo tee /etc/profile.d/container_env.sh >/dev/null
 sudo chmod 0644 /etc/profile.d/container_env.sh
+sudo chown 1000:1000 /home/developer/.ssh
+sudo chmod 700 /home/developer/.ssh
 
 /usr/bin/supervisord -c /etc/supervisor/supervisord.conf
 ENTRYPOINT
@@ -92,7 +94,7 @@ USER ${USERNAME}
 RUN <<'EOF'
 # Run commands as user
 
-mkdir -p ${HOME}/.ssh
+mkdir -p ${HOME}/.ssh && sudo chmod 700 ${HOME}/.ssh
 mkdir -p ${HOME}/.local/bin
 
 # Install a bin tool
