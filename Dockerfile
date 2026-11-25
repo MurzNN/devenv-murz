@@ -26,6 +26,7 @@ git
 et
 mc
 htop
+iputils-ping
 inetutils-traceroute
 mtr-tiny
 "
