@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-docker build --progress=plain -t devenv-murz . && \
-docker run -d --rm --name devenv-murz-run devenv-murz && \
+docker build --progress=plain -t devenv-node . && \
+docker run -d --rm --name devenv-node-run devenv-node && \
 echo "Container started, attaching to it..." && \
-docker exec -it devenv-murz-run /usr/bin/bash; \
+docker exec -it devenv-node-run /usr/bin/bash; \
 echo "Stopping container..." && \
-docker stop devenv-murz-run
+docker stop devenv-node-run

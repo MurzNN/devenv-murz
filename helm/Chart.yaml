@@ -1,7 +1,7 @@
 apiVersion: v2
-name: devenv-murz
+name: devenv-node
 version: 1.0.0
-description: devenv-murz
+description: devenv-node
 type: application
 kubeVersion: ">=1.28.0-0"
 

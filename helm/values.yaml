@@ -22,7 +22,7 @@ controllers:
           startup:
             enabled: false
         image:
-          repository: ghcr.io/murznn/devenv-murz
+          repository: ghcr.io/murznn/devenv-node
           tag: latest
           # pullPolicy: IfNotPresent
           pullPolicy: Always
@@ -72,15 +72,17 @@ persistence:
     accessMode: ReadWriteOnce
     size: 1Gi
     globalMounts:
-    - path: /user
+    - path: /mnt/user
     - path: /home/developer/.ssh
       subPath: .ssh
+    - path: /home/developer/.bash_history
+      subPath: .bash_history
 
   cache:
     accessMode: ReadWriteOnce
     size: 10Gi
     globalMounts:
-    - path: /cache
+    - path: /mnt/cache
     - path: /home/developer/.cache
       subPath: .cache
     - path: /home/developer/.yarn
@@ -131,7 +133,8 @@ persistence:
     volumeSpec:
       configMap:
         name: "{{ .Release.Name }}-devenv-authorized-keys"
-        defaultMode: 600
+        # This is actually doesn't work because of the fsGroup enabled.
+        defaultMode: 384 # 0600
         defaultUser: 1000
     globalMounts:
     - path: /home/developer/.ssh/authorized_keys

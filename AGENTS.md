@@ -1,4 +1,4 @@
-# devenv-murz — agent notes
+# devenv-node — agent notes
 
 Read `README.md` first. This file records constraints that are easy to break.
 
@@ -6,7 +6,7 @@ Read `README.md` first. This file records constraints that are easy to break.
 
 Two artifacts in one folder:
 
-1. A container image (`Dockerfile` at the repo root of this chart). Published as `ghcr.io/murznn/devenv-murz:latest`.
+1. A container image (`Dockerfile` at the repo root of this chart). Published as `ghcr.io/murznn/devenv-node:latest`.
 2. A Helm application chart in `helm/` that runs that image. It does not vendor Kubernetes manifests. `helm/templates/common.yaml` only calls the bjw-s common library (`oci://ghcr.io/bjw-s-labs/helm`, chart `common` 5.3.0). All workload shape lives in `helm/values.yaml`.
 
 Parent repo context: `mrk-services` is a Helmwave project. For app-template behavior, use the `deepwiki` MCP on `bjw-s-labs/helm-charts`, or read `deps/helm-charts` and `deps/helm-charts/docs/src/content/docs/app-template` at the mrk-services root. Values schema comment in `values.yaml` points at `charts/library/common/values.schema.json`.
@@ -44,15 +44,15 @@ ConfigMap and Secret mounts are not on those PVCs. Changing a file under `helm/f
 
 ## Consumers and image tag
 
-- Subchart of `charts/plc-dev` as dependency `devenv` (`alias: devenv`, `file://../devenv-murz/helm`, version `1.0.0`). A packed copy may exist at `charts/plc-dev/charts/devenv-murz-1.0.0.tgz`; bumping this chart's version requires updating that dependency and re-vendoring.
-- Helmwave release `plc-dk` uses `./charts/plc-dev`, not this chart directly. `helmwave.yml` has a commented `# chart: ./charts/devenv-murz/helm`.
-- Chart default image repository is `ghcr.io/murznn/devenv-murz`, tag `latest`, `pullPolicy: Always`. CI pushes `:latest` only, on push to `main`, from `.github/workflows/deploy-image.yml`. The workflow lowercases `github.repository` for the GHCR path.
+- Subchart of `charts/plc-dev` as dependency `devenv` (`alias: devenv`, `file://../devenv-node/helm`, version `1.0.0`). A packed copy may exist at `charts/plc-dev/charts/devenv-node-1.0.0.tgz`; bumping this chart's version requires updating that dependency and re-vendoring.
+- Helmwave release `plc-dk` uses `./charts/plc-dev`, not this chart directly. `helmwave.yml` has a commented `# chart: ./charts/devenv-node/helm`.
+- Chart default image repository is `ghcr.io/murznn/devenv-node`, tag `latest`, `pullPolicy: Always`. CI pushes `:latest` only, on push to `main`, from `.github/workflows/deploy-image.yml`. The workflow lowercases `github.repository` for the GHCR path.
 
 ## Local checks
 
 ```bash
 ./run.sh
-docker build --progress=plain -t devenv-murz .
+docker build --progress=plain -t devenv-node .
 helm template test ./helm
 ```
 

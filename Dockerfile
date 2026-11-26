@@ -141,3 +141,8 @@ EOF
 WORKDIR /app
 
 ENTRYPOINT ["/entrypoint.sh"]
+
+LABEL devcontainer.metadata='[{ \
+  "workspaceFolder": "/app", \
+  "remoteUser": "developer", \
+}]'

@@ -1,13 +1,13 @@
-# devenv-murz
+# devenv-node
 
 A personal Node.js development environment packaged as a container image and a Helm chart. The image runs as user `developer` (uid/gid 1000) and starts `sshd` and the Cursor agent worker under Supervisor. The chart deploys that image as a StatefulSet with persistent home, project, and cache volumes.
 
-Image: `ghcr.io/murznn/devenv-murz:latest` (built from the repo root `Dockerfile`).
+Image: `ghcr.io/murznn/devenv-node:latest` (built from the repo root `Dockerfile`).
 
 ## Layout
 
 ```
-devenv-murz/
+devenv-node/
   Dockerfile                          # image: node:24-trixie + tools + entrypoint
   run.sh                              # local build, then docker exec into a detached container
   .github/workflows/deploy-image.yml  # push to main → build and push :latest to GHCR
@@ -85,7 +85,7 @@ The Secret is not mounted directly onto `~/.ssh`. With `fsGroup: 1000`, kubelet 
 
 ## How it is deployed
 
-This directory is not a Helmwave release by itself. `charts/plc-dev` depends on it as subchart `devenv` (`file://../devenv-murz/helm`). The `plc-dk` release in `helmwave.yml` installs `charts/plc-dev`.
+This directory is not a Helmwave release by itself. `charts/plc-dev` depends on it as subchart `devenv` (`file://../devenv-node/helm`). The `plc-dk` release in `helmwave.yml` installs `charts/plc-dev`.
 
 ## Local image
 
@@ -94,9 +94,9 @@ From this directory:
 ```bash
 ./run.sh
 # or
-docker build --progress=plain -t devenv-murz . && docker run -it --rm devenv-murz bash
+docker build --progress=plain -t devenv-node . && docker run -it --rm devenv-node bash
 ```
 
-`./run.sh` builds, starts a detached container named `devenv-murz-run`, and attaches a shell. The container stops when the shell exits.
+`./run.sh` builds, starts a detached container named `devenv-node-run`, and attaches a shell. The container stops when the shell exits.
 
 CI (`.github/workflows/deploy-image.yml`) runs on push to `main`: `docker build` and `docker push` of `ghcr.io/<lowercase-repo>:latest`.
