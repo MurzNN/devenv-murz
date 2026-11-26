@@ -3,8 +3,13 @@ name: Build and Push
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - "Dockerfile"
+      - ".github/workflows/deploy-image.yml"
+  workflow_dispatch:
 
 permissions:
+  contents: read
   packages: write
 
 jobs:

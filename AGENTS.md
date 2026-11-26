@@ -46,7 +46,8 @@ ConfigMap and Secret mounts are not on those PVCs. Changing a file under `helm/f
 
 - Subchart of `charts/plc-dev` as dependency `devenv` (`alias: devenv`, `file://../devenv-node/helm`, version `1.0.0`). A packed copy may exist at `charts/plc-dev/charts/devenv-node-1.0.0.tgz`; bumping this chart's version requires updating that dependency and re-vendoring.
 - Helmwave release `plc-dk` uses `./charts/plc-dev`, not this chart directly. `helmwave.yml` has a commented `# chart: ./charts/devenv-node/helm`.
-- Chart default image repository is `ghcr.io/murznn/devenv-node`, tag `latest`, `pullPolicy: Always`. CI pushes `:latest` only, on push to `main`, from `.github/workflows/deploy-image.yml`. The workflow lowercases `github.repository` for the GHCR path.
+- Chart default image repository is `ghcr.io/murznn/devenv-node`, tag `latest`, `pullPolicy: Always`. CI pushes `:latest` only, on push to `main` when `Dockerfile` or `.github/workflows/deploy-image.yml` changes. The workflow lowercases `github.repository` for the GHCR path.
+- `.github/workflows/publish-chart.yml` pushes the chart to `oci://ghcr.io/<lowercase-owner>/charts/devenv-node` when `helm/**` changes on `main`. The OCI tag is `helm/Chart.yaml` `version`. The job fails if that version is already in GHCR, so a chart change needs a version bump. The image tag and the chart version are independent.
 
 ## Local checks
 

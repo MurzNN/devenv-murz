@@ -10,7 +10,8 @@ Image: `ghcr.io/murznn/devenv-node:latest` (built from the repo root `Dockerfile
 devenv-node/
   Dockerfile                          # image: node:24-trixie + tools + entrypoint
   run.sh                              # local build, then docker exec into a detached container
-  .github/workflows/deploy-image.yml  # push to main → build and push :latest to GHCR
+  .github/workflows/deploy-image.yml  # Dockerfile change on main → push :latest to GHCR
+  .github/workflows/publish-chart.yml # helm/ change on main → push chart to GHCR OCI
   helm/
     Chart.yaml                        # application chart; library dep bjw-s common 5.3.0
     Chart.lock
@@ -99,4 +100,10 @@ docker build --progress=plain -t devenv-node . && docker run -it --rm devenv-nod
 
 `./run.sh` builds, starts a detached container named `devenv-node-run`, and attaches a shell. The container stops when the shell exits.
 
-CI (`.github/workflows/deploy-image.yml`) runs on push to `main`: `docker build` and `docker push` of `ghcr.io/<lowercase-repo>:latest`.
+CI (`.github/workflows/deploy-image.yml`) runs on push to `main` when `Dockerfile` or that workflow changes: `docker build` and `docker push` of `ghcr.io/<lowercase-repo>:latest`.
+
+`.github/workflows/publish-chart.yml` runs on push to `main` when `helm/` or that workflow changes. It packages the chart (including the `common` dependency) and pushes `oci://ghcr.io/<lowercase-owner>/charts/devenv-node` at the `version` in `helm/Chart.yaml`. Publishing the same version again fails; bump `version` before the next chart release.
+
+```bash
+helm install devenv oci://ghcr.io/murznn/charts/devenv-node --version 1.0.0
+```
