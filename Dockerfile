@@ -28,6 +28,7 @@ iputils-ping
 inetutils-traceroute
 mtr-tiny
 mongodb-mongosh
+xauth
 "
 apt-get install -y --no-install-recommends $packages
 rm -rf /var/lib/apt/lists/*
@@ -134,7 +135,8 @@ export NVM_DIR="$HOME/.nvm"
 corepack enable pnpm
 
 # Install userspace Node tools
-pnpm add -g --allow-build=@nubjs/nub @antfu/ni @nubjs/nub
+pnpm add -g --allow-build=@nubjs/nub @antfu/ni @nubjs/nub playwright-core
+na playwright-core install-deps
 
 EOF
 

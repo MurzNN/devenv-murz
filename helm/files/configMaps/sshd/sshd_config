@@ -10,6 +10,9 @@ ChallengeResponseAuthentication no
 PasswordAuthentication no
 PubkeyAuthentication yes
 
+X11Forwarding yes
+X11UseLocalhost yes
+
 # Target user configuration
 AuthorizedKeysFile .ssh/authorized_keys
 PidFile .ssh/sshd.pid
