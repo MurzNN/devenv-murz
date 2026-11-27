@@ -136,7 +136,7 @@ corepack enable pnpm
 
 # Install userspace Node tools
 pnpm add -g --allow-build=@nubjs/nub @antfu/ni @nubjs/nub playwright-core
-na playwright-core install-deps
+pnpm playwright-core install-deps
 
 EOF
 
