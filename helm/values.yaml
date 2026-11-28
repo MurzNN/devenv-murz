@@ -75,8 +75,6 @@ persistence:
     - path: /mnt/user
     - path: /home/developer/.ssh
       subPath: .ssh
-    - path: /home/developer/.bash_history
-      subPath: .bash_history
 
   cache:
     accessMode: ReadWriteOnce

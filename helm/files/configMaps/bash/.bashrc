@@ -26,6 +26,7 @@ if [ -d ~/.bashrc.d ]; then
   done
 fi
 
+export HISTFILE="/mnt/user/.bash_history"
 
 # Source NVM
 export NVM_DIR="$HOME/.nvm"
