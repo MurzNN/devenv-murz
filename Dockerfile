@@ -54,10 +54,6 @@ fi
 ENTRYPOINT
 chmod +x /entrypoint.sh
 
-# # Install a root bin tool
-# mkdir -p ~/.config/bin && echo "{\"default_path\": \"/usr/local/bin\"}" > ~/.config/bin/config.json
-# curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download/v0.29.4/bin_0.29.4_linux_amd64 && chmod +x /tmp/bin_install && /tmp/bin_install install github.com/marcosnils/bin && rm /tmp/bin_install
-
 # Create environment directories
 mkdir /cache && chmod 777 /cache
 mkdir /app && chown 1000:1000 /app
@@ -106,24 +102,18 @@ mkdir -p ${HOME}/.local/bin
 
 # Install a bin tool
 mkdir -p ~/.config/bin && echo "{\"default_path\": \"${HOME}/.local/bin\"}" > ~/.config/bin/config.json
-# TODO: Rework when https://github.com/marcosnils/bin/issues/192 is fixed
-curl -sL -o /tmp/bin_install https://github.com/marcosnils/bin/releases/download/v0.29.4/bin_0.29.4_linux_amd64 && chmod +x /tmp/bin_install && /tmp/bin_install install github.com/marcosnils/bin && rm /tmp/bin_install
+curl -fsSL https://marcosnils.github.io/bin/install.sh | sh
 
 # Install useful tools through bin
 bin install get.helm.sh
-bin install github.com/helmwave/helmwave -n *.tar.gz
 bin install github.com/cli/cli
-bin install github.com/tstack/lnav
-
-# TODO: Rework to bin when https://github.com/marcosnils/bin/issues/314 is fixed
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+bin install github.com/tstack/lnav -n '*/lnav'
 
 # Install APM – Agent Package Manager
 curl -sSL https://aka.ms/apm-unix | sh
 
 # Install Cursor Agent
 curl https://cursor.com/install -fsS | bash
-
 
 # Install NVM in the user's home directory
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.41.0/install.sh | bash
